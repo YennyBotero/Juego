@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Juego de Batalla</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="pagInicio">
+    <h1>Juego de Batalla</h1>
+    <p>Creado por <br><br> Yenny Paola Botero <br><br> Programa: ADSO A <br><br> Ficha: 2613934 </p> <br>
+    <button onclick="Jugar()">Iniciar juego</button> 
+  </div>
+
+  <div id="pagJuego" style="display: none;">
+    <h1>¡Batalla!</h1>
+    <div class="cajaJuego">
+        <div>
+          <h3>JUGADOR</h3>
+          <!-- Barra de vida del jugador -->
+          <div class="barraJugador">
+            <div class="vidaActual" id="vidaBarraJugador"></div>
+            <div class="vidaRestante"></div>
+          </div>
+          <div>
+            <img id="jugador" src="Personaje1.jfif" alt="">
+          </div>
+          <div id="botonesAtaque" style="display: none;">
+            <img class="button" src="agua.jpg" alt="" onclick="ataque('agua')">Ataque Agua</img>
+            <img class="button" src="fuego.jpg" alt="" onclick="ataque('fuego')">Ataque Fuego</img>
+            <img class="button" src="rayo.jpg" alt="" onclick="ataque('rayo')">Ataque Rayo</img>
+            <div><h1 id="eleccion">Elige un Ataque!</h1></div>
+          </div>
+          <div id="botonesDefensa" style="display: none;">
+            <img class="button" src="agua.jpg" alt="" onclick="defensa('agua')">Escudo Agua</img>
+            <img class="button" src="fuego.jpg" alt="" onclick="defensa('fuego')">Escudo Fuego</img>
+            <img class="button" src="rayo.jpg" alt="" onclick="defensa('rayo')">Escudo Rayo</img>
+            <div><h1 id="eleccion">Elige una Defensa!</h1></div>
+          </div>
+        </div>
+      
+        <div>
+          <h3>ENEMIGO</h3>
+          <!-- Barra de vida del enemigo -->
+          <div class="barraEnemigo">
+            <div class="vidaActual" id="vidaBarraEnemigo"></div>
+            <div class="vidaRestante"></div>
+          </div>
+          <div>
+            <img id="enemigo" src="Enemigo1.jfif" alt="">
+          </div>          
+        </div>
+    </div>      
+
+    <div id="mensaje"></div>
+
+    <h3>Vida:</h3>
+    <p>Jugador: <span id="vidaJugador">100</span></p>
+    <p>Enemigo: <span id="vidaEnemigo">100</span></p>
+    
+    <button id="btnReiniciar" onclick="reiniciarJuego()" style="display: none;">Reiniciar juego</button>
+  </div>
+
+  <script>
+    var vidaJugador = 100;
+    var vidaEnemigo = 100;
+    var turnoJugador = false;
+    var turnoEnemigo = false;
+
+    function Jugar() {
+      document.getElementById('pagInicio').style.display = 'none';
+      document.getElementById('pagJuego').style.display = 'block';
+      turnoEnemigo = true;
+      ataqueInicial();
+    }
+
+    function ataqueInicial() {
+      turnoJugador = true;
+      document.getElementById('botonesAtaque').style.display = 'block';
+      document.getElementById('botonesDefensa').style.display = 'none';
+      document.getElementById('btnReiniciar').style.display = 'none';
+    }
+
+    function defensaJugador() {
+      turnoJugador = false;
+      document.getElementById('botonesAtaque').style.display = 'none';
+      document.getElementById('botonesDefensa').style.display = 'block';
+      document.getElementById('btnReiniciar').style.display = 'none';
+    }
+
+    function ataque(tipoAtaque) {
+      var tipoDefensa = defensaAleatoria();
+      var dano = calculaDano(tipoAtaque, tipoDefensa);
+
+      if (turnoJugador) {
+        mensajeBatalla('Personaje principal', 'Enemigo', tipoAtaque, tipoDefensa, dano);
+        vidaEnemigo -= dano;
+        actualizarBarraVidaEnemigo();
+        document.getElementById('vidaEnemigo').textContent = vidaEnemigo;
+        document.getElementById('botonesAtaque').style.display = 'none';
+        turnoJugador = false;
+        if (vidaJugador <= 0 || vidaEnemigo <= 0) {
+          finJuego();
+        } else {
+          setTimeout(turno_Enemigo, 5000);
+        }
+      }
+    }
+
+    function defensa(tipoDefensa) {
+      var tipoAtaque = ataqueAleatorio();
+      var dano = calculaDano(tipoAtaque, tipoDefensa);
+
+      if (!turnoJugador) {
+        mensajeBatalla('Enemigo', 'Personaje principal', tipoAtaque, tipoDefensa, dano);
+        vidaJugador -= dano;
+        actualizarBarraVidaJugador();
+        document.getElementById('vidaJugador').textContent = vidaJugador;
+        document.getElementById('botonesDefensa').style.display = 'none';
+        turnoJugador = true;
+        if (vidaJugador <= 0 || vidaEnemigo <= 0) {
+          finJuego();
+        } else {
+          setTimeout(ataqueInicial, 5000);
+        }
+      }
+    }
+
+    function turno_Enemigo() {
+      if (!turnoJugador && turnoEnemigo) {
+        var tipoAtaque = ataqueAleatorio();
+        defensaJugador();
+      }
+    }
+
+    function defensaAleatoria() {
+      var tipoDefensas = ['agua', 'fuego', 'rayo'];
+      var indiceAleatorio = Math.floor(Math.random() * tipoDefensas.length);
+      return tipoDefensas[indiceAleatorio];
+    }
+
+    function ataqueAleatorio() {
+      var tipoAtaques = ['agua', 'fuego', 'rayo'];
+      var indiceAleatorio = Math.floor(Math.random() * tipoAtaques.length);
+      return tipoAtaques[indiceAleatorio];
+    }
+
+    function calculaDano(tipoAtaque, tipoDefensa) {
+      var tablaDano = {
+        'fuego-agua': 0,
+        'fuego-fuego': 10,
+        'fuego-rayo': 20,
+        'rayo-agua': 20,
+        'rayo-fuego': 0,
+        'rayo-rayo': 10,
+        'agua-agua': 10,
+        'agua-fuego': 20,
+        'agua-rayo': 0
+      };
+      return tablaDano[tipoAtaque + '-' + tipoDefensa];
+    }
+
+    function mensajeBatalla(agresor, defensa, tipoAtaque, tipoDefensa, dano) {
+      var mensaje = agresor + ' ha atacado con ' + tipoAtaque + ', ' +
+      defensa + ' se ha defendido con ' + tipoDefensa +
+                    ' y le ha quitado ' + dano + ' de vida.';
+      document.getElementById('mensaje').textContent = mensaje;
+    }
+
+    function actualizarBarraVidaJugador() {
+      var vidaBarraJugador = document.getElementById('vidaBarraJugador');
+      var vidaRestante = 100 - vidaJugador;
+      vidaBarraJugador.style.width = vidaJugador + '%';
+      vidaBarraJugador.nextElementSibling.style.width = vidaRestante + '%';
+    }
+
+    function actualizarBarraVidaEnemigo() {
+      var vidaBarraEnemigo = document.getElementById('vidaBarraEnemigo');
+      var vidaRestante = 100 - vidaEnemigo;
+      vidaBarraEnemigo.style.width = vidaEnemigo + '%';
+      vidaBarraEnemigo.nextElementSibling.style.width = vidaRestante + '%';
+    }
+
+    function finJuego() {
+      var mensaje = '';
+      if (vidaJugador <= 0 && vidaEnemigo <= 0) {
+        mensaje = '¡Es un empate!';
+      } else if (vidaJugador <= 0) {
+        mensaje = '¡Has perdido!';
+      } else {
+        mensaje = '¡Has ganado!';
+      }
+      document.getElementById('mensaje').textContent = mensaje;
+      document.getElementById('btnReiniciar').style.display = 'block';
+    }
+
+    function reiniciarJuego() {
+      vidaJugador = 100;
+      vidaEnemigo = 100;
+      turnoJugador = false;
+      turnoEnemigo = false;
+      document.getElementById('vidaJugador').textContent = vidaJugador;
+      document.getElementById('vidaEnemigo').textContent = vidaEnemigo;
+      document.getElementById('mensaje').textContent = '';
+      actualizarBarraVidaJugador();
+      actualizarBarraVidaEnemigo();
+      Jugar();
+    }
+    
+  </script>
+
+</body>
+</html>

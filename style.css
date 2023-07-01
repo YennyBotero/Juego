@@ -1,0 +1,100 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#pagInicio,
+#pagJuego {
+  text-align: center;
+}
+
+.cajaJuego {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.character {
+  width: 200px;
+  height: 200px;
+}
+
+#jugador {
+  background-color: green;
+}
+
+#enemigo {
+  background-color: red;
+}
+
+#botonesAtaque,
+#botonesDefensa {
+  display: none;
+}
+
+.button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  width: 3%;
+}
+
+#mensaje {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Estilos adicionales para las barras de vida */
+.barraJugador {
+  width: 200px;
+  height: 20px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  position: absolute;
+  top: 14%;
+  left: 37.2%;
+}
+
+.barraEnemigo {
+  width: 200px;
+  height: 20px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  position: absolute;
+  top: 24%;
+  right: 0.2%;
+}
+
+.barraJugador .vidaActual {
+  height: 100%;
+  background-color: rgba(96, 137, 96, 0.500);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.barraJugador .vidaRestante {
+  height: 100%;
+  background-color: rgba(221, 29, 29, 0.500);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.barraEnemigo .vidaActual {
+  height: 100%;
+  background-color: rgba(96, 137, 96, 0.500);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.barraEnemigo .vidaRestante {
+  height: 100%;
+  background-color: rgba(221, 29, 29, 0.500);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
